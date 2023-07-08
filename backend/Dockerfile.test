@@ -1,0 +1,15 @@
+# Single stage build just for demo
+FROM python:3.10-alpine as base
+RUN apk add --update --virtual .build-deps \
+    build-base \
+    postgresql-dev \
+    python3-dev \
+    libpq
+
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
+
+COPY . /app
+RUN chmod +x /app/migrate.sh
+ENV PYTHONUNBUFFERED 1
+ENTRYPOINT [ "/app/migrate.sh" ]
